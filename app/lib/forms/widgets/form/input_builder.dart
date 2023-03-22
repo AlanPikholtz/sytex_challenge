@@ -228,6 +228,7 @@ class NumberInput extends StatelessWidget {
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
       ),
+      textInputAction: TextInputAction.done,
       onFieldSubmitted: (value) async {
         await context.read<FormCubit>().updateElement(
               element: element.copyWith(answer: value),
@@ -255,6 +256,7 @@ class TextInput extends StatelessWidget {
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
       ),
+      textInputAction: TextInputAction.done,
       onFieldSubmitted: (value) async {
         await context.read<FormCubit>().updateElement(
               element: element.copyWith(answer: value),
