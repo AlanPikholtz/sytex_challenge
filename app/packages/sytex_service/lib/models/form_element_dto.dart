@@ -11,7 +11,7 @@ class FormElementDTO with _$FormElementDTO {
     required String label,
     required String uuid,
     @JsonKey(name: 'element_type') required String elementType,
-    String? answer,
+    dynamic answer,
     @JsonKey(name: 'input_type') String? inputType,
     List<FormElementOptionDTO>? options,
   }) = _FormElementDTO;

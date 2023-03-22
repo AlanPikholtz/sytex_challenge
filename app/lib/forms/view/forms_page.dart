@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:sytex_coding_challenge/forms/forms.dart';
+import 'package:sytex_repository/sytex_repository.dart' as sytex;
 
 class FormsPage extends StatefulWidget {
   const FormsPage({super.key});
@@ -31,53 +30,133 @@ class _FormsPageState extends State<FormsPage> {
       body: BlocBuilder<FormsBloc, FormsState>(
         builder: (context, state) {
           return state.maybeWhen(
-            orElse: () => const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
-            failed: () => const Center(
-              child: Text('Ha ocurrido un error.'),
-            ),
+            orElse: FormsLoadingBody.new,
+            failed: () => FormsFailedBody(formsBloc: _formsBloc),
             loaded: (forms) {
-              return RefreshIndicator(
-                onRefresh: () async {
-                  _formsBloc.add(const FormsEvent.refresh());
-                },
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute<void>(
-                            builder: (context) => FormPage(form: forms[index]),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        child: Column(
-                          children: [
-                            Text(forms[index].name),
-                            Text(forms[index].description),
-                            Text(
-                              'Created at: ${DateFormat('dd-MM-yyyy HH:mm').format(forms[index].createdAt)}',
-                            ),
-                            Text(
-                              'Scheduled finish at: ${DateFormat('dd-MM-yyyy HH:mm').format(forms[index].scheduledFinishDate)}',
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  itemCount: forms.length,
-                ),
-              );
+              return FormsLoadedBody(forms: forms);
             },
-            empty: () => const Center(
-              child: Text('No hay formularios cargados'),
-            ),
+            empty: () => FormsEmptyBody(formsBloc: _formsBloc),
           );
         },
+      ),
+    );
+  }
+}
+
+class FormsLoadedBody extends StatefulWidget {
+  const FormsLoadedBody({
+    super.key,
+    required this.forms,
+  });
+
+  final List<sytex.Form> forms;
+
+  @override
+  State<FormsLoadedBody> createState() => _FormsLoadedBodyState();
+}
+
+class _FormsLoadedBodyState extends State<FormsLoadedBody> {
+  late FormsBloc _formsBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _formsBloc = context.read<FormsBloc>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        _formsBloc.add(const FormsEvent.refresh());
+      },
+      child: ListView.separated(
+        separatorBuilder: (_, __) => const SizedBox(
+          height: 20,
+        ),
+        itemBuilder: (context, index) {
+          return FormCard(
+            form: widget.forms[index],
+          );
+        },
+        itemCount: widget.forms.length,
+      ),
+    );
+  }
+}
+
+class FormsLoadingBody extends StatelessWidget {
+  const FormsLoadingBody({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+}
+
+class FormsEmptyBody extends StatelessWidget {
+  const FormsEmptyBody({
+    super.key,
+    required FormsBloc formsBloc,
+  }) : _formsBloc = formsBloc;
+
+  final FormsBloc _formsBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          const Text(
+            'No forms found.',
+            style: TextStyle(color: Colors.white, fontSize: 22),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: ElevatedButton(
+              onPressed: () => _formsBloc.add(const FormsEvent.refresh()),
+              child: const Text('Retry'),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class FormsFailedBody extends StatelessWidget {
+  const FormsFailedBody({
+    super.key,
+    required FormsBloc formsBloc,
+  }) : _formsBloc = formsBloc;
+
+  final FormsBloc _formsBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          const Text(
+            'An error has occurred.',
+            style: TextStyle(color: Colors.white, fontSize: 22),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: ElevatedButton(
+              onPressed: () => _formsBloc.add(const FormsEvent.refresh()),
+              child: const Text('Retry'),
+            ),
+          )
+        ],
       ),
     );
   }

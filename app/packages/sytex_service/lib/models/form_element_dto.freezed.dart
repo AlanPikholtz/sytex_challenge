@@ -25,7 +25,7 @@ mixin _$FormElementDTO {
   String get uuid => throw _privateConstructorUsedError;
   @JsonKey(name: 'element_type')
   String get elementType => throw _privateConstructorUsedError;
-  String? get answer => throw _privateConstructorUsedError;
+  dynamic get answer => throw _privateConstructorUsedError;
   @JsonKey(name: 'input_type')
   String? get inputType => throw _privateConstructorUsedError;
   List<FormElementOptionDTO>? get options => throw _privateConstructorUsedError;
@@ -47,7 +47,7 @@ abstract class $FormElementDTOCopyWith<$Res> {
       String label,
       String uuid,
       @JsonKey(name: 'element_type') String elementType,
-      String? answer,
+      dynamic answer,
       @JsonKey(name: 'input_type') String? inputType,
       List<FormElementOptionDTO>? options});
 }
@@ -93,7 +93,7 @@ class _$FormElementDTOCopyWithImpl<$Res, $Val extends FormElementDTO>
       answer: freezed == answer
           ? _value.answer
           : answer // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       inputType: freezed == inputType
           ? _value.inputType
           : inputType // ignore: cast_nullable_to_non_nullable
@@ -119,7 +119,7 @@ abstract class _$$_FormElementDTOCopyWith<$Res>
       String label,
       String uuid,
       @JsonKey(name: 'element_type') String elementType,
-      String? answer,
+      dynamic answer,
       @JsonKey(name: 'input_type') String? inputType,
       List<FormElementOptionDTO>? options});
 }
@@ -163,7 +163,7 @@ class __$$_FormElementDTOCopyWithImpl<$Res>
       answer: freezed == answer
           ? _value.answer
           : answer // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       inputType: freezed == inputType
           ? _value.inputType
           : inputType // ignore: cast_nullable_to_non_nullable
@@ -202,7 +202,7 @@ class _$_FormElementDTO implements _FormElementDTO {
   @JsonKey(name: 'element_type')
   final String elementType;
   @override
-  final String? answer;
+  final dynamic answer;
   @override
   @JsonKey(name: 'input_type')
   final String? inputType;
@@ -231,7 +231,7 @@ class _$_FormElementDTO implements _FormElementDTO {
             (identical(other.uuid, uuid) || other.uuid == uuid) &&
             (identical(other.elementType, elementType) ||
                 other.elementType == elementType) &&
-            (identical(other.answer, answer) || other.answer == answer) &&
+            const DeepCollectionEquality().equals(other.answer, answer) &&
             (identical(other.inputType, inputType) ||
                 other.inputType == inputType) &&
             const DeepCollectionEquality().equals(other._options, _options));
@@ -239,8 +239,15 @@ class _$_FormElementDTO implements _FormElementDTO {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, index, label, uuid, elementType,
-      answer, inputType, const DeepCollectionEquality().hash(_options));
+  int get hashCode => Object.hash(
+      runtimeType,
+      index,
+      label,
+      uuid,
+      elementType,
+      const DeepCollectionEquality().hash(answer),
+      inputType,
+      const DeepCollectionEquality().hash(_options));
 
   @JsonKey(ignore: true)
   @override
@@ -262,7 +269,7 @@ abstract class _FormElementDTO implements FormElementDTO {
       required final String label,
       required final String uuid,
       @JsonKey(name: 'element_type') required final String elementType,
-      final String? answer,
+      final dynamic answer,
       @JsonKey(name: 'input_type') final String? inputType,
       final List<FormElementOptionDTO>? options}) = _$_FormElementDTO;
 
@@ -279,7 +286,7 @@ abstract class _FormElementDTO implements FormElementDTO {
   @JsonKey(name: 'element_type')
   String get elementType;
   @override
-  String? get answer;
+  dynamic get answer;
   @override
   @JsonKey(name: 'input_type')
   String? get inputType;

@@ -12,7 +12,7 @@ _$_FormElementDTO _$$_FormElementDTOFromJson(Map<String, dynamic> json) =>
       label: json['label'] as String,
       uuid: json['uuid'] as String,
       elementType: json['element_type'] as String,
-      answer: json['answer'] as String?,
+      answer: json['answer'],
       inputType: json['input_type'] as String?,
       options: (json['options'] as List<dynamic>?)
           ?.map((e) => FormElementOptionDTO.fromJson(e as Map<String, dynamic>))

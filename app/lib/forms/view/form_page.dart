@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sytex_coding_challenge/forms/forms.dart';
 import 'package:sytex_repository/sytex_repository.dart' as sytex;
 
-class FormPage extends StatelessWidget {
+class FormPage extends StatefulWidget {
   const FormPage({
     super.key,
     required this.form,
@@ -11,23 +12,48 @@ class FormPage extends StatelessWidget {
   final sytex.Form form;
 
   @override
+  State<FormPage> createState() => _FormPageState();
+}
+
+late ScrollController _scrollController;
+
+class _FormPageState extends State<FormPage> {
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(form.name),
+    return BlocProvider(
+      create: (context) => FormCubit(
+        sytexRepository: RepositoryProvider.of<sytex.SytexRepository>(context),
+        form: widget.form,
       ),
-      body: Column(
-        children: [
-          Text(form.description),
-          Text(
-            'Created at: ${DateFormat('dd-MM-yyyy HH:mm').format(form.createdAt)}',
+      child: Scaffold(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              SliverAppBar.medium(
+                title: Text(
+                  widget.form.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              FormBuilder(
+                form: widget.form,
+                scrollController: _scrollController,
+              ),
+            ],
           ),
-          Text(
-            'Scheduled finish at: ${DateFormat('dd-MM-yyyy HH:mm').format(form.scheduledFinishDate)}',
-          ),
-          Text(form.assignedTo.name),
-          Image.network(form.assignedTo.avatarUrl),
-        ],
+        ),
       ),
     );
   }

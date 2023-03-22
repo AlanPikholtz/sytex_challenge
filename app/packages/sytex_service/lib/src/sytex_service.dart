@@ -55,4 +55,68 @@ class SytexService {
       return const Left(Failure.jsonParsing());
     }
   }
+
+  Future<Either<Failure, FormDTO>> getForm({required String uuid}) async {
+    late Response<Map<String, dynamic>> response;
+    try {
+      response = await dioClient.get<Map<String, dynamic>>('/form/$uuid');
+      if (response.statusCode != 200) {
+        return const Left(Failure.unknown());
+      }
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.other && e.error is SocketException) {
+        return const Left(Failure.noConnectionError());
+      } else if (e.response != null) {
+        return const Left(Failure.serverError());
+      } else {
+        rethrow;
+      }
+    } catch (e) {
+      return const Left(Failure.unknown());
+    }
+
+    try {
+      final form = FormDTO.fromJson(response.data as Map<String, dynamic>);
+
+      return Right(form);
+    } catch (e) {
+      return const Left(Failure.jsonParsing());
+    }
+  }
+
+  Future<Either<Failure, FormElementDTO>> updateElement({
+    required FormElementDTO elementDTO,
+  }) async {
+    late Response<Map<String, dynamic>> response;
+    try {
+      response = await dioClient.patch<Map<String, dynamic>>(
+        '/form-element/${elementDTO.uuid}',
+        data: {
+          'answer': elementDTO.answer,
+        },
+      );
+      if (response.statusCode != 200) {
+        return const Left(Failure.unknown());
+      }
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.other && e.error is SocketException) {
+        return const Left(Failure.noConnectionError());
+      } else if (e.response != null) {
+        return const Left(Failure.serverError());
+      } else {
+        rethrow;
+      }
+    } catch (e) {
+      return const Left(Failure.unknown());
+    }
+
+    try {
+      final element =
+          FormElementDTO.fromJson(response.data as Map<String, dynamic>);
+
+      return Right(element);
+    } catch (e) {
+      return const Left(Failure.jsonParsing());
+    }
+  }
 }

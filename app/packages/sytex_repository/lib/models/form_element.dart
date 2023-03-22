@@ -23,7 +23,7 @@ class FormElement with _$FormElement {
         label: dto.label,
         uuid: dto.uuid,
         elementType: dto.elementType,
-        answer: dto.answer,
+        answer: dto.answer?.toString(),
         inputType: dto.inputType,
         options: dto.options != null
             ? dto.options!.map(FormElementOption.fromDTO).toList()
@@ -35,7 +35,7 @@ class FormElement with _$FormElement {
         label: label,
         uuid: uuid,
         elementType: elementType,
-        answer: answer,
+        answer: inputType == 'yes_no' ? answer == 'true' : answer,
         inputType: inputType,
         options: options != null
             ? options!.map((option) => option.toDTO()).toList()
